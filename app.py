@@ -6,17 +6,19 @@ from urllib.request import urlopen as uReq
 
 app = Flask(__name__)
 
+
 @app.route('/',methods=['GET'])  # route to display the home page
 @cross_origin()
 def homePage():
     return render_template("index.html")
+
 
 @app.route('/review',methods=['POST','GET']) # route to show the review comments in a web UI
 @cross_origin()
 def index():
     if request.method == 'POST':
         try:
-            searchString = request.form['content'].replace(" ","")
+            searchString = request.form['content'].replace(" ", "")
             flipkart_url = "https://www.flipkart.com/search?q=" + searchString
             uClient = uReq(flipkart_url)
             flipkartPage = uClient.read()
@@ -39,14 +41,12 @@ def index():
             reviews = []
             for commentbox in commentboxes:
                 try:
-                    #name.encode(encoding='utf-8')
                     name = commentbox.div.div.find_all('p', {'class': '_2sc7ZR _2V5EHH'})[0].text
 
                 except:
                     name = 'No Name'
 
                 try:
-                    #rating.encode(encoding='utf-8')
                     rating = commentbox.div.div.div.div.text
 
 
@@ -54,17 +54,15 @@ def index():
                     rating = 'No Rating'
 
                 try:
-                    #commentHead.encode(encoding='utf-8')
                     commentHead = commentbox.div.div.div.p.text
 
                 except:
                     commentHead = 'No Comment Heading'
                 try:
                     comtag = commentbox.div.div.find_all('div', {'class': ''})
-                    #custComment.encode(encoding='utf-8')
                     custComment = comtag[0].div.text
                 except Exception as e:
-                    print("Exception while creating dictionary: ",e)
+                    print("Exception while creating dictionary: ", e)
 
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
@@ -78,6 +76,7 @@ def index():
     else:
         return render_template('index.html')
 
+
 if __name__ == "__main__":
-    #app.run(host='127.0.0.1', port=8001, debug=True)
-	app.run(debug=True)
+    app.run(debug=True)
+
